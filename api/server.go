@@ -19,5 +19,16 @@ func NewServer(store *db.Store) *Server {
 	}
 
 	server.router.POST("/accounts", server.createAccount)
+	server.router.GET("/accounts/:id", server.getAccount)
+	server.router.GET("/accounts", server.listAccounts)
 	return server
+}
+
+// Start runs the http server on a specific address
+func (server *Server) Start(address string) error {
+	return server.router.Run(address)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }
