@@ -13,7 +13,7 @@ import (
 var (
 	testQueries *Queries
 	testDB      *sql.DB
-	testStore   *Store
+	testStore   Store
 )
 
 func TestMain(m *testing.M) {
