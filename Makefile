@@ -21,4 +21,8 @@ test:
 
 server:
 	go run main.go
-.PHONY: postgres createdb dropdb sqlc migrateup migratedown test server 
+
+mock:
+	mockgen -destination db/mock/store.go -package mockdb github.com/yantong1775/vaultCore/db/sqlc Store
+
+.PHONY: postgres createdb dropdb sqlc migrateup migratedown test server mock mock

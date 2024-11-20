@@ -26,7 +26,7 @@ func RandomString(n int) string {
 }
 
 // Randomly generate a owner name
-func RandomOnwer() string {
+func RandomOwner() string {
 	return RandomString(6)
 }
 
