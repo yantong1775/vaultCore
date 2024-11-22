@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,15 +10,24 @@ import (
 )
 
 type createTransferRequest struct {
-	FromAccountID int64 `json:"from_account_id" binding:"required,min=1"`
-	ToAccountID   int64 `json:"to_account_id" binding:"required,min=1"`
-	Amount        int64 `json:"amount" binding:"required,gt=0"`
+	FromAccountID int64  `json:"from_account_id" binding:"required,min=1"`
+	ToAccountID   int64  `json:"to_account_id" binding:"required,min=1"`
+	Amount        int64  `json:"amount" binding:"required,gt=0"`
+	Currency      string `json:"currency" binding:"required,currency"`
 }
 
 func (server *Server) createTransfer(ctx *gin.Context) {
 	var req createTransferRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	if !server.validAccount(ctx, req.FromAccountID, req.Currency) {
+		return
+	}
+
+	if !server.validAccount(ctx, req.ToAccountID, req.Currency) {
 		return
 	}
 
@@ -34,6 +44,25 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, transfer)
+}
+
+func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) bool {
+	account, err := server.store.GetAccount(ctx, accountID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return false
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return false
+	}
+
+	if account.Currency != currency {
+		err := fmt.Errorf("account currency %s does not match transfer currency %s", account.Currency, currency)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return false
+	}
+	return true
 }
 
 type getTransferRequest struct {

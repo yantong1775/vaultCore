@@ -11,7 +11,7 @@ import (
 // createAccount request
 type createAccountRequest struct {
 	Owner    string `json:"owner" binding:"required"`
-	Currency string `json:"currency" binding:"required,oneof=USD EUR"` // no space after comma
+	Currency string `json:"currency" binding:"required,currency"` // no space after comma
 }
 
 func (s *Server) createAccount(ctx *gin.Context) {
