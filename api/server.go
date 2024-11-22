@@ -36,6 +36,8 @@ func NewServer(store db.Store) *Server {
 	server.router.GET("/entries/:id", server.getEntry)
 	server.router.GET("/entries", server.listEntry)
 
+	server.router.POST("/users", server.createUser)
+
 	return server
 }
 
