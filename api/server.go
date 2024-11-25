@@ -43,16 +43,16 @@ func NewServer(Config util.Config, store db.Store) (*Server, error) {
 
 // Set up router
 func (server *Server) setupRouter() {
-	server.router.POST("/accounts", server.createAccount)
-	server.router.GET("/accounts/:id", server.getAccount)
-	server.router.GET("/accounts", server.listAccounts)
-
-	server.router.POST("/transfers", server.createTransfer)
-	server.router.GET("/transfers/:id", server.getTransfer)
-	server.router.GET("/transfers", server.listTransfers)
-
 	server.router.POST("/users", server.createUser)
 	server.router.POST("/users/login", server.loginUser)
+
+	authRoutes := server.router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts", server.listAccounts)
+	authRoutes.POST("/transfers", server.createTransfer)
+	authRoutes.GET("/transfers/:id", server.getTransfer)
+	authRoutes.GET("/transfers", server.listTransfers)
 }
 
 // Start runs the http server on a specific address
