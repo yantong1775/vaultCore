@@ -1,5 +1,5 @@
 postgres:
-	docker run --name mypostgres -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d -p 5432:5432 postgres
+	docker run --name mypostgres --network bank-network -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d -p 5432:5432 postgres
 
 createdb:
 	docker exec -it mypostgres createdb --username=root --owner=root vaultCore
