@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultcore-api-deployment
+  labels:
+    app: vaultcore-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vaultcore-api
+  template:
+    metadata:
+      labels:
+        app: vaultcore-api
+    spec:
+      containers:
+      - name: vaultcore-api
+        image: 954976295771.dkr.ecr.us-east-1.amazonaws.com/vaultcore:a194c1432fd5f2294706c10ff8be206a86e4921f
+        ports:
+        - containerPort: 8080

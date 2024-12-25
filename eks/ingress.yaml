@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1 
+kind: IngressClass 
+metadata:   
+  name: nginx 
+spec:   
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vaultcore-ingress
+spec:
+  ingressClassName: nginx
+
+  rules:
+  - host: "api.vault-core.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: vaultcore-api-service
+            port:
+              number: 80
